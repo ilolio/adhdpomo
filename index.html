@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en" data-mode="idle" data-lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#f8f9fa">
+  <meta name="description" content="ADHD-friendly flexible work timer">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="css/style.css">
+  <title>FlowPomo</title>
+</head>
+<body>
+  <header id="header">
+    <div class="header-left">
+      <span class="app-name" data-i18n="app.name">FlowPomo</span>
+    </div>
+    <div class="header-right">
+      <button id="btn-lang" type="button" class="icon-btn" aria-label="Switch language">
+        <span id="lang-label">EN</span>
+      </button>
+      <button id="btn-settings" type="button" class="icon-btn" aria-label="Settings">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="10" cy="10" r="3"/>
+          <path d="M10 1.5v2M10 16.5v2M1.5 10h2M16.5 10h2M3.4 3.4l1.4 1.4M15.2 15.2l1.4 1.4M3.4 16.6l1.4-1.4M15.2 4.8l1.4-1.4"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- IDLE VIEW -->
+    <section id="view-idle" class="view">
+      <div class="timer-display">
+        <span class="clock-label" data-i18n="idle.ready">Ready</span>
+      </div>
+      <div class="action-buttons">
+        <button id="btn-start-work" class="btn btn-primary btn-large" data-i18n="idle.startWork">
+          Start Work Now
+        </button>
+        <button id="btn-start-grace" class="btn btn-secondary btn-large" data-i18n="idle.startGrace">
+          5-min Break, Then Start
+        </button>
+      </div>
+      <div id="today-summary" class="summary-card">
+        <div class="summary-row">
+          <span class="summary-label" data-i18n="stats.today">Today</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-item">
+            <span class="summary-value" id="today-work">0:00</span>
+            <span class="summary-unit" data-i18n="stats.work">work</span>
+          </span>
+          <span class="summary-item">
+            <span class="summary-value" id="today-sessions">0</span>
+            <span class="summary-unit" data-i18n="stats.sessions">sessions</span>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- GRACE PERIOD VIEW -->
+    <section id="view-grace" class="view" hidden>
+      <div class="timer-display">
+        <span id="grace-clock" class="clock">05:00</span>
+        <span class="clock-label" data-i18n="grace.label">Grace Period</span>
+      </div>
+      <p class="grace-message" data-i18n="grace.message">
+        Take a breath. Work starts soon.
+      </p>
+      <div class="action-buttons">
+        <button id="btn-grace-start-now" class="btn btn-primary" data-i18n="grace.startNow">
+          I'm Ready — Start Now
+        </button>
+        <button id="btn-grace-cancel" class="btn btn-ghost" data-i18n="grace.cancel">
+          Cancel
+        </button>
+      </div>
+    </section>
+
+    <!-- WORK MODE VIEW -->
+    <section id="view-work" class="view" hidden>
+      <div class="timer-display timer-display--work">
+        <span id="work-clock" class="clock clock--subtle">00:00</span>
+        <span class="clock-label clock-label--subtle" data-i18n="work.label">Working...</span>
+      </div>
+      <div class="action-buttons action-buttons--work">
+        <button id="btn-work-break" class="btn btn-ghost btn-small" data-i18n="work.takeBreak">
+          Take Break
+        </button>
+        <button id="btn-work-stop" class="btn btn-ghost btn-small" data-i18n="work.stop">
+          Stop
+        </button>
+      </div>
+    </section>
+
+    <!-- BREAK VIEW -->
+    <section id="view-break" class="view" hidden>
+      <div class="timer-display">
+        <span id="break-clock" class="clock">05:00</span>
+        <span id="break-label" class="clock-label" data-i18n="break.label">Break Time</span>
+      </div>
+      <div class="action-buttons">
+        <button id="btn-break-back" class="btn btn-primary" data-i18n="break.backToWork">
+          Back to Work
+        </button>
+        <button id="btn-break-stop" class="btn btn-ghost" data-i18n="break.stop">
+          Stop
+        </button>
+      </div>
+    </section>
+
+    <!-- STATS VIEW -->
+    <section id="view-stats" class="view" hidden>
+      <h2 class="stats-title" data-i18n="stats.title">Statistics</h2>
+
+      <div class="stats-card">
+        <h3 data-i18n="stats.today">Today</h3>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-value" id="stat-today-work">0:00</span>
+            <span class="stat-label" data-i18n="stats.totalWork">Total Work</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value" id="stat-today-break">0:00</span>
+            <span class="stat-label" data-i18n="stats.totalBreak">Total Break</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value" id="stat-today-sessions">0</span>
+            <span class="stat-label" data-i18n="stats.sessions">Sessions</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-card">
+        <h3 data-i18n="stats.thisWeek">This Week</h3>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-value" id="stat-week-work">0:00</span>
+            <span class="stat-label" data-i18n="stats.totalWork">Total Work</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value" id="stat-week-break">0:00</span>
+            <span class="stat-label" data-i18n="stats.totalBreak">Total Break</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value" id="stat-week-sessions">0</span>
+            <span class="stat-label" data-i18n="stats.sessions">Sessions</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-card">
+        <h3 data-i18n="stats.history">History</h3>
+        <div id="stats-history" class="stats-history"></div>
+      </div>
+
+      <button id="btn-clear-stats" class="btn btn-ghost btn-small stats-clear" data-i18n="stats.clear">
+        Clear All Data
+      </button>
+    </section>
+  </main>
+
+  <nav id="bottom-nav">
+    <button id="nav-timer" class="nav-btn nav-btn--active" data-i18n="nav.timer">Timer</button>
+    <button id="nav-stats" class="nav-btn" data-i18n="nav.stats">Stats</button>
+  </nav>
+
+  <!-- Settings Dialog -->
+  <dialog id="settings-dialog">
+    <div class="dialog-header">
+      <h2 data-i18n="settings.title">Settings</h2>
+      <button id="btn-settings-close" type="button" class="icon-btn" aria-label="Close">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M5 5l10 10M15 5L5 15"/>
+        </svg>
+      </button>
+    </div>
+    <form id="settings-form">
+      <fieldset>
+        <legend data-i18n="settings.durations">Durations</legend>
+        <label class="setting-row">
+          <span data-i18n="settings.workDuration">Work target (min)</span>
+          <input type="number" id="setting-work-duration" min="1" max="180" value="25">
+        </label>
+        <label class="setting-row">
+          <span data-i18n="settings.breakDuration">Break (min)</span>
+          <input type="number" id="setting-break-duration" min="1" max="60" value="5">
+        </label>
+        <label class="setting-row">
+          <span data-i18n="settings.graceDuration">Grace period (min)</span>
+          <input type="number" id="setting-grace-duration" min="1" max="30" value="5">
+        </label>
+      </fieldset>
+      <fieldset>
+        <legend data-i18n="settings.sound">Sound</legend>
+        <label class="setting-row">
+          <span data-i18n="settings.soundEnabled">Enabled</span>
+          <input type="checkbox" id="setting-sound-enabled" checked>
+        </label>
+        <label class="setting-row">
+          <span data-i18n="settings.soundVolume">Volume</span>
+          <input type="range" id="setting-sound-volume" min="0" max="100" value="50">
+        </label>
+        <div class="setting-row">
+          <span></span>
+          <button type="button" id="btn-test-sound" class="btn btn-ghost btn-small" data-i18n="settings.testSound">
+            Test Sound
+          </button>
+        </div>
+      </fieldset>
+      <div class="dialog-actions">
+        <button type="submit" class="btn btn-primary" data-i18n="settings.save">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
