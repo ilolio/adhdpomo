@@ -21,6 +21,7 @@ import {
   updateBreakClock,
   updateTitle,
   formatTime,
+  setWorkGraceButtonVisible,
 } from './ui.js';
 
 export const States = Object.freeze({
@@ -33,7 +34,7 @@ export const States = Object.freeze({
 const ALLOWED_TRANSITIONS = {
   [States.IDLE]: [States.WORKING, States.GRACE],
   [States.GRACE]: [States.WORKING, States.IDLE],
-  [States.WORKING]: [States.BREAK, States.IDLE],
+  [States.WORKING]: [States.BREAK, States.IDLE, States.GRACE],
   [States.BREAK]: [States.WORKING, States.IDLE],
 };
 
@@ -41,6 +42,7 @@ let currentState = States.IDLE;
 let activeTimer = null;
 let currentSession = null;
 let currentSegmentStart = null;
+let graceCount = 0;
 
 // Callbacks for external listeners
 let onStateChange = null;
@@ -104,21 +106,25 @@ function enterState(state, prevState) {
     case States.GRACE:
       ensureAudioContext();
       requestNotificationPermission();
-      createSession();
+      if (!currentSession) {
+        createSession();
+      }
+      graceCount++;
       currentSegmentStart = Date.now();
       showTimerView('grace');
 
+      const graceDurationMs = graceCount > 1
+        ? 3 * 60 * 1000
+        : settings.graceDurationMin * 60 * 1000;
+
       activeTimer = createTimer({
         mode: 'countdown',
-        durationMs: settings.graceDurationMin * 60 * 1000,
+        durationMs: graceDurationMs,
         onTick(remaining) {
           updateGraceClock(remaining);
           updateTitle('grace', formatTime(remaining));
         },
         onComplete() {
-          if (settings.soundEnabled) {
-            playGraceEndTone(settings.soundVolume / 100);
-          }
           transition(States.WORKING);
         },
       });
@@ -131,14 +137,21 @@ function enterState(state, prevState) {
         requestNotificationPermission();
         createSession();
       }
+      if (prevState === States.GRACE && settings.soundEnabled) {
+        playGraceEndTone(settings.soundVolume / 100);
+      }
       currentSegmentStart = Date.now();
       showTimerView('work');
+      setWorkGraceButtonVisible(true);
 
       activeTimer = createTimer({
         mode: 'countup',
         onTick(elapsed) {
           updateWorkClock(elapsed);
           updateTitle('work', formatTime(elapsed));
+          if (elapsed >= 60 * 1000) {
+            setWorkGraceButtonVisible(false);
+          }
         },
       });
       activeTimer.start();
@@ -185,6 +198,7 @@ function enterState(state, prevState) {
 // --- Session management ---
 
 function createSession() {
+  graceCount = 0;
   currentSession = {
     id: `session_${Date.now()}`,
     date: getDateString(new Date()),

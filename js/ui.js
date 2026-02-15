@@ -27,6 +27,7 @@ export function initUI() {
   els.btnGraceStartNow = document.getElementById('btn-grace-start-now');
   els.btnGraceCancel = document.getElementById('btn-grace-cancel');
   els.btnWorkBreak = document.getElementById('btn-work-break');
+  els.btnWorkGrace = document.getElementById('btn-work-grace');
   els.btnWorkStop = document.getElementById('btn-work-stop');
   els.btnBreakBack = document.getElementById('btn-break-back');
   els.btnBreakStop = document.getElementById('btn-break-stop');
@@ -122,6 +123,14 @@ export function updateBreakClock(remainingMs, isOvertime = false) {
     els.breakClock.textContent = formatTime(remainingMs);
     els.breakLabel.textContent = t('break.label');
     els.breakLabel.classList.remove('break-overtime');
+  }
+}
+
+// --- Work grace button ---
+
+export function setWorkGraceButtonVisible(visible) {
+  if (els.btnWorkGrace) {
+    els.btnWorkGrace.hidden = !visible;
   }
 }
 
