@@ -50,6 +50,9 @@
 
 [data-mode="work"] {
   --color-bg: #fafafa;
+  --transition-fast: 0ms;
+  --transition-normal: 0ms;
+  --transition-slow: 0ms;
 }
 
 [data-mode="break"] {
@@ -160,6 +163,10 @@ body {
   animation: fadeIn var(--transition-normal);
 }
 
+[data-mode="work"] .view {
+  animation: none;
+}
+
 .view[hidden] {
   display: none;
 }
@@ -224,6 +231,10 @@ body {
 
 .timer-display--work {
   padding: var(--space-2xl) 0;
+}
+
+.timer-display--work .clock {
+  display: none;
 }
 
 .action-buttons--work {
