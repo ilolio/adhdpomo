@@ -56,6 +56,11 @@ function main() {
     transition(States.IDLE);
   });
 
+  // Work: Restart Grace Period
+  els.btnWorkGrace.addEventListener('click', () => {
+    transition(States.GRACE);
+  });
+
   // Work: Take Break
   els.btnWorkBreak.addEventListener('click', () => {
     transition(States.BREAK);
