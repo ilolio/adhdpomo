@@ -144,11 +144,11 @@ function enterState(state, prevState) {
       showTimerView('work');
       setWorkGraceButtonVisible(true);
 
+      updateTitle('work', '');
       activeTimer = createTimer({
         mode: 'countup',
         onTick(elapsed) {
           updateWorkClock(elapsed);
-          updateTitle('work', formatTime(elapsed));
           if (elapsed >= 60 * 1000) {
             setWorkGraceButtonVisible(false);
           }

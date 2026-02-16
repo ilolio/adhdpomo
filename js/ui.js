@@ -193,6 +193,9 @@ export function closeSettings() {
 export function updateTitle(mode, timeStr) {
   if (mode === 'idle') {
     document.title = 'FlowPomo';
+  } else if (mode === 'work' || !timeStr) {
+    const modeLabel = t(`${mode}.label`);
+    document.title = `${modeLabel} - FlowPomo`;
   } else {
     const modeLabel = t(`${mode}.label`);
     document.title = `${timeStr} - ${modeLabel}`;
